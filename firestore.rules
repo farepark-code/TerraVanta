@@ -1,0 +1,111 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Helper Functions ──────────────────────
+    
+    function isAuth() {
+      return request.auth != null;
+    }
+    
+    function getUser() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    
+    function role() {
+      return request.auth.token.role;
+    }
+    
+    function isSuperAdmin() {
+      return request.auth.token.isSuperAdmin == true;
+    }
+    
+    function isConsultant() {
+      return role() == 'consultant';
+    }
+    
+    function isMember() {
+      return role() == 'consultant_member';
+    }
+    
+    function isClientUser() {
+      return role() == 'client_user';
+    }
+    
+    function ownsResource(consultantId) {
+      return request.auth.uid == consultantId;
+    }
+    
+    function isAssignedMember(clientId) {
+      return isMember() && clientId in getUser().assignedClientIds;
+    }
+
+    // ── Collections ───────────────────────────
+
+    match /consultants/{consultantId} {
+      allow read, write: if isAuth() && (
+        ownsResource(consultantId) ||
+        isSuperAdmin()
+      );
+    }
+
+    match /clients/{clientId} {
+      allow read: if isAuth() && (
+        resource.data.consultantId == request.auth.uid ||
+        isAssignedMember(clientId) ||
+        (isClientUser() && resource.data.picEmail == request.auth.token.email) ||
+        isSuperAdmin()
+      );
+      allow write: if isAuth() && (
+        resource.data.consultantId == request.auth.uid ||
+        isAssignedMember(clientId) ||
+        isSuperAdmin()
+      );
+    }
+
+    match /assessments/{assessmentId} {
+      allow read: if isAuth() && (
+        resource.data.consultantId == request.auth.uid ||
+        isAssignedMember(resource.data.clientId) ||
+        (isClientUser() && resource.data.clientId == request.auth.token.clientId) ||
+        isSuperAdmin()
+      );
+      allow write: if isAuth() && (
+        resource.data.consultantId == request.auth.uid ||
+        isAssignedMember(resource.data.clientId) ||
+        isSuperAdmin()
+      );
+
+      match /responses/{questionId} {
+        allow read, write: if isAuth() && (
+          get(/databases/$(database)/documents/assessments/$(assessmentId)).data.consultantId == request.auth.uid ||
+          isSuperAdmin() ||
+          isClientUser()
+        );
+      }
+    }
+
+    match /questionnaireTemplates/{id} {
+      allow read: if isAuth();
+      allow write: if isAuth() && isSuperAdmin();
+    }
+
+    match /auditLogs/{logId} {
+      allow read: if isAuth() && (
+        isConsultant() || isSuperAdmin()
+      );
+      allow create: if isAuth();
+      allow update, delete: if false;
+    }
+
+    match /admins/{adminId} {
+      allow read, write: if isAuth() && isSuperAdmin();
+      allow delete: if false;
+    }
+
+    match /platformStats/{docId} {
+      allow read: if isAuth() && isSuperAdmin();
+      allow write: if false;
+    }
+  }
+}
