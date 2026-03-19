@@ -39,19 +39,26 @@ export default function Login() {
     setIsLoading(true);
     try {
       const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
+      const idToken = await userCredential.user.getIdToken();
       const tokenResult = await userCredential.user.getIdTokenResult();
       const role = tokenResult.claims.role;
       const isSuperAdmin = tokenResult.claims.isSuperAdmin;
 
+      // SET COOKIE FOR NEXT.JS MIDDLEWARE (SSR routing bypass)
+      document.cookie = `session=${idToken}; path=/; max-age=${60 * 60 * 24 * 7}; samesite=lax`;
+
       toast.success("Login berhasil", { description: "Selamat datang kembali." });
 
-      if (isSuperAdmin) {
-        router.push("/admin/dashboard");
-      } else if (role === "client_user") {
-        router.push("/client/portal");
-      } else {
-        router.push("/consultant/dashboard");
-      }
+      // Beri jeda 500ms agar cookie benar-benar tersimpan sebelum redirect
+      setTimeout(() => {
+        if (isSuperAdmin) {
+          router.push("/admin/dashboard");
+        } else if (role === "client_user") {
+          router.push("/client/portal");
+        } else {
+          router.push("/consultant/dashboard");
+        }
+      }, 500);
     } catch (error: any) {
       toast.error("Akses Ditolak", { description: "Email atau password salah, atau domain belum diizinkan di Firebase." });
     } finally {
