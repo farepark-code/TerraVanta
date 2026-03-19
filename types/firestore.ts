@@ -40,6 +40,7 @@ export interface ConsultantProfile {
   companyName: string
   logoUrl: string | null
   brandColor: string        // default: '#10B981'
+  tagline?: string | null
   reportCredits: number     // default: 999999
   isSuperAdmin: boolean     // default: false
   billingBypass: boolean    // default: true (no billing)

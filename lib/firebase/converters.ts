@@ -4,6 +4,7 @@ import {
   SnapshotOptions,
   DocumentData,
   Timestamp,
+  PartialWithFieldValue,
 } from 'firebase/firestore';
 import type {
   ConsultantProfile,
@@ -15,7 +16,7 @@ import type {
 } from '../../types/firestore';
 
 export const consultantConverter: FirestoreDataConverter<ConsultantProfile> = {
-  toFirestore: (data: Partial<ConsultantProfile>) => {
+  toFirestore: (data: PartialWithFieldValue<ConsultantProfile>) => {
     const { id, ...rest } = data;
     return rest as DocumentData;
   },
@@ -31,7 +32,7 @@ export const consultantConverter: FirestoreDataConverter<ConsultantProfile> = {
 };
 
 export const clientConverter: FirestoreDataConverter<ClientProfile> = {
-  toFirestore: (data: Partial<ClientProfile>) => {
+  toFirestore: (data: PartialWithFieldValue<ClientProfile>) => {
     const { id, ...rest } = data;
     return rest as DocumentData;
   },
@@ -47,7 +48,7 @@ export const clientConverter: FirestoreDataConverter<ClientProfile> = {
 };
 
 export const assessmentConverter: FirestoreDataConverter<Assessment> = {
-  toFirestore: (data: Partial<Assessment>) => {
+  toFirestore: (data: PartialWithFieldValue<Assessment>) => {
     const { id, ...rest } = data;
     return rest as DocumentData;
   },
@@ -65,7 +66,7 @@ export const assessmentConverter: FirestoreDataConverter<Assessment> = {
 };
 
 export const auditLogConverter: FirestoreDataConverter<AuditLog> = {
-  toFirestore: (data: Partial<AuditLog>) => {
+  toFirestore: (data: PartialWithFieldValue<AuditLog>) => {
     const { id, ...rest } = data;
     return rest as DocumentData;
   },
@@ -80,7 +81,7 @@ export const auditLogConverter: FirestoreDataConverter<AuditLog> = {
 };
 
 export const questionnaireTemplateConverter: FirestoreDataConverter<QuestionnaireTemplate> = {
-  toFirestore: (data: Partial<QuestionnaireTemplate>) => {
+  toFirestore: (data: PartialWithFieldValue<QuestionnaireTemplate>) => {
     const { id, ...rest } = data;
     return rest as DocumentData;
   },
@@ -94,7 +95,7 @@ export const questionnaireTemplateConverter: FirestoreDataConverter<Questionnair
 };
 
 export const adminProfileConverter: FirestoreDataConverter<AdminProfile> = {
-  toFirestore: (data: Partial<AdminProfile>) => {
+  toFirestore: (data: PartialWithFieldValue<AdminProfile>) => {
     const { id, ...rest } = data;
     return rest as DocumentData;
   },
