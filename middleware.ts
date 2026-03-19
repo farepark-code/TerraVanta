@@ -11,7 +11,6 @@ export function middleware(request: NextRequest) {
   // Note: These values should be extracted from the valid token/session.
   // We mock the extraction here for the structural outline.
   let role: string | null = null;
-  let isSuperAdmin = false;
   let isAuthenticated = !!sessionCookie;
 
   if (isAuthenticated && sessionCookie?.value) {
@@ -21,7 +20,6 @@ export function middleware(request: NextRequest) {
       if (encodedPayload) {
         const payload = JSON.parse(atob(encodedPayload));
         role = payload.role || null;
-        isSuperAdmin = !!payload.isSuperAdmin;
       }
     } catch (e) {
       // invalid token placeholder
@@ -31,24 +29,17 @@ export function middleware(request: NextRequest) {
   // /(auth)/* -> redirect to dashboard if logged in
   if (pathname.startsWith('/login') || pathname.startsWith('/register')) {
     if (isAuthenticated) {
-      if (role === 'consultant' || role === 'consultant_member') {
-        return NextResponse.redirect(new URL('/consultant/dashboard', request.url));
-      }
       if (role === 'client_user') {
         return NextResponse.redirect(new URL('/client/portal', request.url));
       }
-      if (isSuperAdmin) {
-        return NextResponse.redirect(new URL('/admin/dashboard', request.url));
-      }
-      // default fallback
-      return NextResponse.redirect(new URL('/consultant/dashboard', request.url));
+      return NextResponse.redirect(new URL('/admin/dashboard', request.url));
     }
     return NextResponse.next();
   }
 
   // Route protections
-  if (pathname.startsWith('/consultant')) {
-    if (!isAuthenticated || (role !== 'consultant' && role !== 'consultant_member')) {
+  if (pathname.startsWith('/admin')) {
+    if (!isAuthenticated || (role !== 'consultant' && role !== 'admin')) {
       return NextResponse.redirect(new URL('/login', request.url));
     }
   }
@@ -59,20 +50,13 @@ export function middleware(request: NextRequest) {
     }
   }
 
-  if (pathname.startsWith('/admin')) {
-    if (!isAuthenticated || !isSuperAdmin) {
-      return NextResponse.redirect(new URL('/login', request.url));
-    }
-  }
-
   return NextResponse.next();
 }
 
 export const config = {
   matcher: [
-    '/consultant/:path*',
-    '/client/portal/:path*',
     '/admin/:path*',
+    '/client/portal/:path*',
     '/login',
     '/register'
   ],

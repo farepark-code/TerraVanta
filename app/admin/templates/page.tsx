@@ -74,29 +74,29 @@ export default function TemplateManagerPage() {
 
   return (
     <div className="p-8 space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center animate-in fade-in slide-in-from-top-4 duration-500">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Template Kuesioner</h1>
-          <p className="text-gray-500">Kelola master data pertanyaan ESG Platform.</p>
+          <h1 className="text-2xl font-bold text-white tracking-tight drop-shadow-md">Template Kuesioner</h1>
+          <p className="text-emerald-100/60">Kelola master data pertanyaan ESG Platform.</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={handleReseed}>
+          <Button variant="outline" className="border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/10" onClick={handleReseed}>
             <RefreshCw className="w-4 h-4 mr-2" /> Re-seed Data
           </Button>
-          <Button className="bg-[#991B1B] hover:bg-red-800">
+          <Button className="bg-emerald-600 hover:bg-emerald-500 text-white glow-effect">
             <Plus className="w-4 h-4 mr-2" /> Tambah Pertanyaan
           </Button>
         </div>
       </div>
 
-      <Card>
+      <Card className="glass-panel animate-in fade-in slide-in-from-bottom-8 duration-700">
         <CardContent className="p-0">
-          <div className="p-4 border-b flex items-center justify-between gap-4">
+          <div className="p-4 border-b border-white/10 flex items-center justify-between gap-4">
             <div className="relative flex-1 max-w-sm">
-              <Search className="w-4 h-4 absolute left-3 top-3 text-gray-400" />
+              <Search className="w-4 h-4 absolute left-3 top-3 text-emerald-100/50" />
               <Input 
                 placeholder="Cari ID atau pertanyaan..." 
-                className="pl-9"
+                className="pl-9 bg-black/40 border-white/10 text-white placeholder:text-white/30"
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
               />
@@ -116,48 +116,48 @@ export default function TemplateManagerPage() {
           </div>
           
           <Table>
-            <TableHeader className="bg-gray-50">
-              <TableRow>
-                <TableHead className="w-20">ID</TableHead>
-                <TableHead>Tier</TableHead>
-                <TableHead>Pilar</TableHead>
-                <TableHead className="w-[40%]">Pertanyaan</TableHead>
-                <TableHead>Tipe</TableHead>
-                <TableHead>Wajib</TableHead>
-                <TableHead className="text-right">Aksi</TableHead>
+            <TableHeader className="bg-white/5 border-b border-white/10">
+              <TableRow className="border-white/10 hover:bg-transparent">
+                <TableHead className="w-20 text-emerald-100/50">ID</TableHead>
+                <TableHead className="text-emerald-100/50">Tier</TableHead>
+                <TableHead className="text-emerald-100/50">Pilar</TableHead>
+                <TableHead className="w-[40%] text-emerald-100/50">Pertanyaan</TableHead>
+                <TableHead className="text-emerald-100/50">Tipe</TableHead>
+                <TableHead className="text-emerald-100/50">Wajib</TableHead>
+                <TableHead className="text-right text-emerald-100/50">Aksi</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {loading && (
-                <TableRow>
-                  <TableCell colSpan={7} className="text-center py-12 text-gray-500">
-                    <Loader2 className="w-6 h-6 animate-spin mx-auto" />
+                <TableRow className="border-white/10 hover:bg-transparent">
+                  <TableCell colSpan={7} className="text-center py-12 text-emerald-100/50">
+                    <Loader2 className="w-6 h-6 animate-spin mx-auto text-emerald-400" />
                   </TableCell>
                 </TableRow>
               )}
               
               {!loading && filtered.map((t: any) => (
-                <TableRow key={t.docId} className="hover:bg-gray-50/50">
-                  <TableCell className="font-medium text-xs whitespace-nowrap">{t.id}</TableCell>
-                  <TableCell><Badge variant="outline" className="text-xs">T{t.tier}</Badge></TableCell>
-                  <TableCell><span className="capitalize text-xs text-gray-600">{t.pillar}</span></TableCell>
-                  <TableCell className="text-xs max-w-md truncate" title={t.questionText}>{t.questionText}</TableCell>
-                  <TableCell className="text-xs text-gray-500">{t.inputType}</TableCell>
+                <TableRow key={t.docId} className="border-white/5 hover:bg-white/5 transition-colors">
+                  <TableCell className="font-medium text-xs whitespace-nowrap text-emerald-50">{t.id}</TableCell>
+                  <TableCell><Badge variant="outline" className="text-[10px] border-emerald-500/30 text-emerald-400">T{t.tier}</Badge></TableCell>
+                  <TableCell><span className="capitalize text-xs text-emerald-100/60">{t.pillar}</span></TableCell>
+                  <TableCell className="text-xs max-w-md truncate text-emerald-50" title={t.questionText}>{t.questionText}</TableCell>
+                  <TableCell className="text-xs text-emerald-100/50">{t.inputType}</TableCell>
                   <TableCell>
-                    {t.isRequired ? <Badge variant="secondary" className="bg-red-50 text-red-700 text-[10px]">WAJIB</Badge> : <Badge variant="outline" className="text-[10px]">OPTIONAL</Badge>}
+                    {t.isRequired ? <Badge className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/30 text-[10px]">WAJIB</Badge> : <Badge variant="outline" className="text-[10px] border-white/20 text-emerald-100/40">OPTIONAL</Badge>}
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-1">
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0"><Edit className="w-4 h-4 text-gray-500" /></Button>
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:text-red-600 hover:bg-red-50" onClick={() => handleDelete(t.docId, t.id)}><Trash2 className="w-4 h-4" /></Button>
+                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-emerald-100/50 hover:text-emerald-300 hover:bg-emerald-500/10"><Edit className="w-4 h-4" /></Button>
+                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:text-red-400 text-red-400/50 hover:bg-red-500/10 border-red-500/30" onClick={() => handleDelete(t.docId, t.id)}><Trash2 className="w-4 h-4" /></Button>
                     </div>
                   </TableCell>
                 </TableRow>
               ))}
               
               {!loading && filtered.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8 text-gray-500">Tidak ada template kuesioner ditemukan.</TableCell>
+                <TableRow className="border-none hover:bg-transparent">
+                  <TableCell colSpan={7} className="text-center py-8 text-emerald-100/50">Tidak ada template kuesioner ditemukan.</TableCell>
                 </TableRow>
               )}
             </TableBody>

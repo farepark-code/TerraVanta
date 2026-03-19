@@ -42,7 +42,6 @@ export default function Login() {
       const idToken = await userCredential.user.getIdToken();
       const tokenResult = await userCredential.user.getIdTokenResult();
       const role = tokenResult.claims.role;
-      const isSuperAdmin = tokenResult.claims.isSuperAdmin;
 
       // SET COOKIE FOR NEXT.JS MIDDLEWARE (SSR routing bypass)
       document.cookie = `session=${idToken}; path=/; max-age=${60 * 60 * 24 * 7}; samesite=lax`;
@@ -51,12 +50,10 @@ export default function Login() {
 
       // Beri jeda 500ms agar cookie benar-benar tersimpan sebelum redirect
       setTimeout(() => {
-        if (isSuperAdmin) {
-          router.push("/admin/dashboard");
-        } else if (role === "client_user") {
+        if (role === "client_user") {
           router.push("/client/portal");
         } else {
-          router.push("/consultant/dashboard");
+          router.push("/admin/dashboard");
         }
       }, 500);
     } catch (error: any) {

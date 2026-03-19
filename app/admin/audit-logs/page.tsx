@@ -48,34 +48,34 @@ export default function AuditLogsPage() {
 
   return (
     <div className="p-8 space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center animate-in fade-in slide-in-from-top-4 duration-500">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Audit Log Platform</h1>
-          <p className="text-gray-500">Log aktivitas immutable (Read-Only).</p>
+          <h1 className="text-2xl font-bold text-white tracking-tight drop-shadow-md">Audit Log Platform</h1>
+          <p className="text-emerald-100/60">Log aktivitas immutable (Read-Only).</p>
         </div>
-        <Button variant="outline" onClick={handleExport}>
+        <Button variant="outline" className="border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/10" onClick={handleExport}>
           <Download className="w-4 h-4 mr-2" /> Export CSV (Top 100)
         </Button>
       </div>
 
-      <Card>
+      <Card className="glass-panel animate-in fade-in slide-in-from-bottom-8 duration-700">
         <CardContent className="p-0">
           <Table>
-            <TableHeader className="bg-gray-50">
-              <TableRow>
+            <TableHeader className="bg-white/5 border-b border-white/10">
+              <TableRow className="border-white/10 hover:bg-transparent">
                 <TableHead className="w-10"></TableHead>
-                <TableHead>Timestamp</TableHead>
-                <TableHead>Actor</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Aksi</TableHead>
-                <TableHead>Target</TableHead>
+                <TableHead className="text-emerald-100/50">Timestamp</TableHead>
+                <TableHead className="text-emerald-100/50">Actor</TableHead>
+                <TableHead className="text-emerald-100/50">Role</TableHead>
+                <TableHead className="text-emerald-100/50">Aksi</TableHead>
+                <TableHead className="text-emerald-100/50">Target</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {loading && (
-                <TableRow>
-                  <TableCell colSpan={6} className="text-center py-12 text-gray-500">
-                    <Loader2 className="w-6 h-6 animate-spin mx-auto" />
+                <TableRow className="border-white/10 hover:bg-transparent">
+                  <TableCell colSpan={6} className="text-center py-12 text-emerald-100/50">
+                    <Loader2 className="w-6 h-6 animate-spin mx-auto text-emerald-400" />
                   </TableCell>
                 </TableRow>
               )}
@@ -86,32 +86,34 @@ export default function AuditLogsPage() {
                 
                 return (
                   <React.Fragment key={l.id}>
-                    <TableRow className="hover:bg-gray-50/50 cursor-pointer" onClick={() => setExpandedRow(isExpanded ? null : l.id)}>
+                    <TableRow className="border-white/5 hover:bg-white/5 cursor-pointer transition-colors" onClick={() => setExpandedRow(isExpanded ? null : l.id)}>
                       <TableCell>
-                        {isExpanded ? <ChevronDown className="w-4 h-4 text-gray-400" /> : <ChevronRight className="w-4 h-4 text-gray-400" />}
+                        {isExpanded ? <ChevronDown className="w-4 h-4 text-emerald-400" /> : <ChevronRight className="w-4 h-4 text-emerald-100/40" />}
                       </TableCell>
-                      <TableCell className="whitespace-nowrap text-xs text-gray-500">{dt}</TableCell>
-                      <TableCell className="text-xs font-medium" title={l.uid}>{l.uid.substring(0, 8)}...</TableCell>
+                      <TableCell className="whitespace-nowrap text-xs text-emerald-100/60">{dt}</TableCell>
+                      <TableCell className="text-xs font-medium text-emerald-50" title={l.uid}>{l.uid.substring(0, 8)}...</TableCell>
                       <TableCell>
-                        <Badge variant="outline" className={`text-[10px] ${l.isAdminAction ? 'bg-red-50 text-red-700' : 'bg-gray-50 text-gray-600'}`}>
+                        <Badge className={`text-[10px] ${l.isAdminAction ? 'bg-red-500/20 text-red-300 border border-red-500/30' : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'}`}>
                           {l.userRole}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-xs font-bold text-gray-700">{l.action}</TableCell>
-                      <TableCell className="text-xs bg-gray-50 px-2 py-1 rounded inline-block mt-2 font-mono" title={l.resourceId}>
-                        {l.resourceType}
+                      <TableCell className="text-xs font-bold text-white tracking-wide">{l.action}</TableCell>
+                      <TableCell>
+                        <span className="text-xs bg-black/40 border border-white/10 px-2 py-1 rounded inline-block mt-2 font-mono text-emerald-100/70" title={l.resourceId}>
+                          {l.resourceType}
+                        </span>
                       </TableCell>
                     </TableRow>
                     {isExpanded && (
-                      <TableRow className="bg-gray-50/30">
-                        <TableCell colSpan={6} className="p-4 border-b">
+                      <TableRow className="bg-black/20 border-white/5 hover:bg-black/20">
+                        <TableCell colSpan={6} className="p-4 border-b border-white/5">
                           <div className="grid grid-cols-2 gap-4">
-                            <div className="p-3 bg-white border rounded shadow-sm overflow-x-auto text-xs font-mono text-gray-700">
-                              <p className="font-bold text-red-600 mb-2 border-b pb-1">BEFORE</p>
+                            <div className="p-3 bg-black/40 border border-white/10 rounded shadow-inner overflow-x-auto text-xs font-mono text-emerald-100/70">
+                              <p className="font-bold text-red-400 mb-2 border-b border-white/10 pb-1">BEFORE</p>
                               <pre>{JSON.stringify(l.before || {}, null, 2)}</pre>
                             </div>
-                            <div className="p-3 bg-white border rounded shadow-sm overflow-x-auto text-xs font-mono text-gray-700">
-                              <p className="font-bold text-green-600 mb-2 border-b pb-1">AFTER</p>
+                            <div className="p-3 bg-black/40 border border-white/10 rounded shadow-inner overflow-x-auto text-xs font-mono text-emerald-100/70">
+                              <p className="font-bold text-emerald-400 mb-2 border-b border-white/10 pb-1">AFTER</p>
                               <pre>{JSON.stringify(l.after || {}, null, 2)}</pre>
                             </div>
                           </div>
