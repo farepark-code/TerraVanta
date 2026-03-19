@@ -16,12 +16,8 @@ service cloud.firestore {
       return request.auth.token.role;
     }
     
-    function isSuperAdmin() {
-      return request.auth.token.isSuperAdmin == true;
-    }
-    
-    function isConsultant() {
-      return role() == 'consultant';
+    function isAdmin() {
+      return role() in ['admin', 'consultant'];
     }
     
     function isMember() {
@@ -43,23 +39,18 @@ service cloud.firestore {
     // ── Collections ───────────────────────────
 
     match /consultants/{consultantId} {
-      allow read, write: if isAuth() && (
-        ownsResource(consultantId) ||
-        isSuperAdmin()
-      );
+      allow read, write: if isAuth() && ownsResource(consultantId);
     }
 
     match /clients/{clientId} {
       allow read: if isAuth() && (
         resource.data.consultantId == request.auth.uid ||
         isAssignedMember(clientId) ||
-        (isClientUser() && resource.data.picEmail == request.auth.token.email) ||
-        isSuperAdmin()
+        (isClientUser() && resource.data.picEmail == request.auth.token.email)
       );
       allow write: if isAuth() && (
         resource.data.consultantId == request.auth.uid ||
-        isAssignedMember(clientId) ||
-        isSuperAdmin()
+        isAssignedMember(clientId)
       );
     }
 
@@ -67,19 +58,16 @@ service cloud.firestore {
       allow read: if isAuth() && (
         resource.data.consultantId == request.auth.uid ||
         isAssignedMember(resource.data.clientId) ||
-        (isClientUser() && resource.data.clientId == request.auth.token.clientId) ||
-        isSuperAdmin()
+        (isClientUser() && resource.data.clientId == request.auth.token.clientId)
       );
       allow write: if isAuth() && (
         resource.data.consultantId == request.auth.uid ||
-        isAssignedMember(resource.data.clientId) ||
-        isSuperAdmin()
+        isAssignedMember(resource.data.clientId)
       );
 
       match /responses/{questionId} {
         allow read, write: if isAuth() && (
           get(/databases/$(database)/documents/assessments/$(assessmentId)).data.consultantId == request.auth.uid ||
-          isSuperAdmin() ||
           isClientUser()
         );
       }
@@ -87,25 +75,13 @@ service cloud.firestore {
 
     match /questionnaireTemplates/{id} {
       allow read: if isAuth();
-      allow write: if isAuth() && isSuperAdmin();
+      allow write: if isAuth() && isAdmin();
     }
 
     match /auditLogs/{logId} {
-      allow read: if isAuth() && (
-        isConsultant() || isSuperAdmin()
-      );
+      allow read: if isAuth() && isAdmin();
       allow create: if isAuth();
       allow update, delete: if false;
-    }
-
-    match /admins/{adminId} {
-      allow read, write: if isAuth() && isSuperAdmin();
-      allow delete: if false;
-    }
-
-    match /platformStats/{docId} {
-      allow read: if isAuth() && isSuperAdmin();
-      allow write: if false;
     }
   }
 }
