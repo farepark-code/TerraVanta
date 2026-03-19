@@ -102,7 +102,7 @@ export default function TemplateManagerPage() {
               />
             </div>
             <div className="w-48">
-              <Select value={tierFilter} onValueChange={setTierFilter}>
+              <Select value={tierFilter} onValueChange={(val) => setTierFilter(val || "all")}>
                 <SelectTrigger><SelectValue placeholder="Pilih Tier" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Semua Tier</SelectItem>
